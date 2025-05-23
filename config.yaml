@@ -1,0 +1,27 @@
+# 服务器配置
+server:
+  address: ":8080"            # 监听地址，格式为 IP:PORT
+  readTimeout: 10s            # 请求读取超时时间
+  writeTimeout: 10s           # 响应写入超时时间
+
+# 微信小程序配置
+wechat:
+  appID: ""                   # 微信小程序AppID
+  appSecret: ""               # 微信小程序AppSecret
+
+# 抓取器配置
+scraper:
+  userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"  # 浏览器UA
+  timeout: 30s                # 抓取超时时间
+  maxConcurrency: 5           # 最大并发数
+  retryTimes: 3               # 重试次数
+  retryDelay: 2s              # 重试间隔
+
+# 数据库配置
+database:
+  type: "sqlite"              # 数据库类型 (sqlite, mysql, postgres)
+  host: "localhost"           # 数据库主机地址
+  port: 3306                  # 数据库端口
+  user: "root"                # 数据库用户名
+  password: ""                # 数据库密码
+  dbName: "wechat_mini_data"  # 数据库名称 
