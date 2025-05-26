@@ -1,6 +1,6 @@
 # 使用多阶段构建
 # 第一阶段：构建阶段
-FROM golang:1.20-alpine AS builder
+FROM hub-mirror.c.163.com/library/golang:1.20-alpine AS builder
 
 # 安装依赖
 RUN apk add --no-cache git ca-certificates tzdata
