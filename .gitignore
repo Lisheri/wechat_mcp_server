@@ -2,3 +2,33 @@ crawl_results
 test_output
 __pycache__
 server.log
+
+# Go编译文件
+mcp_wechat_mini
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go测试文件
+*.test
+
+# Go覆盖率文件
+*.out
+
+# Go依赖文件
+vendor/
+
+# Go模块缓存
+go.sum.bak
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
