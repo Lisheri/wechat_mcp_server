@@ -16,12 +16,12 @@ from config import CrawlerConfig
 class ScreenshotManager:
     """截图管理器"""
     
-    def __init__(self, window_manager):
-        self.window_manager = window_manager
+    def __init__(self, window_detector):
+        self.window_detector = window_detector
         
     def take_mini_program_screenshot(self, filename=None):
         """截取小程序区域的截图"""
-        bounds = self.window_manager.get_mini_program_bounds()
+        bounds = self.window_detector.get_current_bounds()
         if not bounds:
             print("⚠️ 小程序区域未设置，无法截图")
             return None
@@ -48,7 +48,7 @@ class ScreenshotManager:
     
     def scroll_in_mini_program(self, direction='down', distance=None):
         """在小程序区域内滚动"""
-        bounds = self.window_manager.get_mini_program_bounds()
+        bounds = self.window_detector.get_current_bounds()
         if not bounds:
             print("⚠️ 小程序区域未设置")
             return False
@@ -74,7 +74,10 @@ class ScreenshotManager:
         print("📜 开始滚动截取小程序完整页面...")
         
         # 确保聚焦到小程序
-        self.window_manager.focus_mini_program_area()
+        center_point = self.window_detector.get_center_point()
+        if center_point:
+            pyautogui.click(center_point[0], center_point[1])
+            time.sleep(0.5)
         
         screenshots = []
         

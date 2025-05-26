@@ -6,7 +6,7 @@
 """
 
 from .config import CrawlerConfig
-from .wechat_window_manager import WeChatWindowManager
+from .window_detector import WindowDetector
 from .screenshot_manager import ScreenshotManager
 from .interaction_manager import InteractionManager
 from .analysis_client import AnalysisClient
@@ -18,7 +18,7 @@ __author__ = "WeChat Mini Program Crawler Team"
 
 __all__ = [
     'CrawlerConfig',
-    'WeChatWindowManager',
+    'WindowDetector',
     'ScreenshotManager', 
     'InteractionManager',
     'AnalysisClient',
