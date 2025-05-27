@@ -50,6 +50,13 @@ def check_dependencies():
         missing_deps.append("pyobjc-framework-Cocoa")
         print("❌ pyobjc-framework-Cocoa - Mac系统集成")
     
+    try:
+        import pygetwindow as gw
+        print("✅ pygetwindow - 系统窗口检测")
+    except ImportError:
+        missing_deps.append("pygetwindow")
+        print("❌ pygetwindow - 系统窗口检测")
+    
     if missing_deps:
         print(f"\n❌ 缺少 {len(missing_deps)} 个依赖库")
         print("请运行以下命令安装:")
@@ -67,10 +74,11 @@ def setup_pyautogui():
 
 def main():
     """主函数"""
-    print("🤖 微信小程序自动化爬虫 v2.0")
-    print("=" * 50)
+    print("🤖 微信小程序自动化爬虫 v2.1 (模块化版本)")
+    print("=" * 55)
     print("🎯 直接对当前已打开的小程序进行截图和按钮点击")
-    print("✨ 新功能：动态检测小程序窗口位置，无需手动配置")
+    print("✨ 新功能：系统级窗口检测，精确截图边界")
+    print("🚀 架构：模块化设计，高度可维护")
     print("")
     
     # 检查依赖
