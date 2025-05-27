@@ -18,16 +18,16 @@ class CrawlerConfig:
     OUTPUT_DIR = "crawl_results"
     SCREENSHOTS_DIR = os.path.join(OUTPUT_DIR, "screenshots")
     
-    # 微信窗口配置
-    WECHAT_WINDOW_SIZE = (400, 700)
+    # 微信窗口配置 - 增加宽度以完整覆盖小程序内容
+    WECHAT_WINDOW_SIZE = (500, 800)  # 从400x700增加到500x800
     WECHAT_WINDOW_POSITION = (100, 100)
     
     # 小程序区域配置（相对于微信窗口）
     MINI_PROGRAM_BOUNDS = {
-        'x': 150,      # 小程序起始x坐标
-        'y': 150,      # 小程序起始y坐标  
-        'width': 350,  # 小程序宽度
-        'height': 500  # 小程序高度
+        'x': 9,        # 小程序起始x坐标（基于精确检测结果）
+        'y': 49,       # 小程序起始y坐标（基于精确检测结果）
+        'width': 405,  # 小程序宽度（基于精确检测结果，接近414像素）
+        'height': 701  # 小程序高度（基于精确检测结果）
     }
     
     # 小程序入口按钮位置（在小程序列表页面）

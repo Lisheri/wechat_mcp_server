@@ -12,12 +12,12 @@ from config import CrawlerConfig
 class InteractionManager:
     """交互管理器"""
     
-    def __init__(self, window_detector):
-        self.window_detector = window_detector
+    def __init__(self, window_manager):
+        self.window_manager = window_manager
     
     def click_in_mini_program(self, relative_x, relative_y):
         """在小程序区域内点击指定相对坐标"""
-        bounds = self.window_detector.get_current_bounds()
+        bounds = self.window_manager.get_mini_program_bounds()
         if not bounds:
             print("⚠️ 小程序区域未设置")
             return False
@@ -86,7 +86,7 @@ class InteractionManager:
     def _try_swipe_back(self):
         """尝试手势滑动返回"""
         try:
-            bounds = self.window_detector.get_current_bounds()
+            bounds = self.window_manager.get_mini_program_bounds()
             if not bounds:
                 return False
             

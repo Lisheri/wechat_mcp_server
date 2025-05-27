@@ -9,7 +9,7 @@ import os
 import time
 from datetime import datetime
 from config import CrawlerConfig
-from window_detector import WindowDetector
+from wechat_window_manager import WeChatWindowManager
 from screenshot_manager import ScreenshotManager
 from interaction_manager import InteractionManager
 from analysis_client import AnalysisClient
@@ -20,9 +20,9 @@ class CrawlerCore:
     
     def __init__(self):
         # 初始化各个组件
-        self.window_detector = WindowDetector()
-        self.screenshot_manager = ScreenshotManager(self.window_detector)
-        self.interaction_manager = InteractionManager(self.window_detector)
+        self.window_manager = WeChatWindowManager()
+        self.screenshot_manager = ScreenshotManager(self.window_manager)
+        self.interaction_manager = InteractionManager(self.window_manager)
         self.analysis_client = AnalysisClient()
         self.data_manager = DataManager()
         
@@ -47,13 +47,13 @@ class CrawlerCore:
         print("🗑️ 清理旧截图文件...")
         CrawlerConfig.clean_screenshots()
         
-        # 检测小程序窗口
-        mini_program_bounds = self.window_detector.detect_mini_program_window(app_name)
-        if not mini_program_bounds:
-            print("❌ 无法检测到小程序窗口，请确保小程序已打开并可见")
+        # 设置小程序环境
+        if not self.window_manager.setup_mini_program_environment():
+            print("❌ 无法设置小程序环境，请确保微信已打开")
             return False
         
-        print(f"\n📱 小程序窗口检测成功: {mini_program_bounds}")
+        mini_program_bounds = self.window_manager.get_mini_program_bounds()
+        print(f"\n📱 小程序区域设置成功: {mini_program_bounds}")
         print("✅ 准备开始爬取...")
         
         # 开始爬取主页面
@@ -102,7 +102,7 @@ class CrawlerCore:
             print(f"\n🎯 正在处理按钮 {i+1}/{len(buttons)}: {button['text']}")
             
             # 确保聚焦到小程序区域
-            self._focus_mini_program_area()
+            self.window_manager.focus_mini_program_area()
             
             # 点击按钮
             if self.interaction_manager.click_button(button):
@@ -120,11 +120,11 @@ class CrawlerCore:
                 print("🔙 正在返回主页面...")
                 if self.interaction_manager.go_back():
                     time.sleep(CrawlerConfig.PAGE_LOAD_DELAY)
-                    self._focus_mini_program_area()
+                    self.window_manager.focus_mini_program_area()
                 else:
                     print("⚠️ 返回主页面失败，可能需要手动操作")
                     input("请手动返回到主页面，然后按回车继续...")
-                    self._focus_mini_program_area()
+                    self.window_manager.focus_mini_program_area()
             
             # 进度提示
             print(f"📊 进度: {i+1}/{len(buttons)} 按钮已处理")
@@ -136,7 +136,7 @@ class CrawlerCore:
         print(f"📄 正在爬取小程序页面: {page_name}")
         
         # 确保聚焦到小程序区域
-        self._focus_mini_program_area()
+        self.window_manager.focus_mini_program_area()
         time.sleep(1)
         
         # 截取小程序区域的普通截图
@@ -169,19 +169,8 @@ class CrawlerCore:
             },
             'analysis': analysis_data,
             'extracted_features': self.analysis_client.extract_page_features(analysis_data),
-            'mini_program_bounds': self.window_detector.get_current_bounds()
+            'mini_program_bounds': self.window_manager.get_mini_program_bounds()
         }
         
         print(f"✅ 小程序页面爬取完成: {page_name}")
-        return page_data
-    
-    def _focus_mini_program_area(self):
-        """聚焦到小程序区域"""
-        center_point = self.window_detector.get_center_point()
-        if center_point:
-            import pyautogui
-            pyautogui.click(center_point[0], center_point[1])
-            time.sleep(CrawlerConfig.FOCUS_DELAY)
-            print(f"🎯 已聚焦到小程序区域: {center_point}")
-        else:
-            print("⚠️ 无法获取小程序中心点，跳过聚焦操作") 
+        return page_data 
