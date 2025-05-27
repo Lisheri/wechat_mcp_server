@@ -108,11 +108,11 @@ class ScreenshotUtils:
         """计算安全的滚动点位置，避开可能的按钮区域"""
         # 避开顶部和底部的按钮区域
         # 顶部20%和底部20%通常有导航栏和按钮
-        safe_top_margin = height * 0.2  # 顶部20%区域
-        safe_bottom_margin = height * 0.2  # 底部20%区域
+        safe_top_margin = height * 0.03  # 顶部20%区域
+        # safe_bottom_margin = height * 0.03  # 底部20%区域
         
         # 计算安全滚动区域（中间60%区域）
-        safe_y = y + safe_top_margin + (height - safe_top_margin - safe_bottom_margin) // 2
+        safe_y = safe_top_margin
         safe_x = x + width // 2  # 水平居中
         
         return {

@@ -18,8 +18,9 @@ from .validator import ScreenshotValidator
 class ScreenshotManager:
     """核心截图管理器"""
     
-    def __init__(self, window_manager):
+    def __init__(self, window_manager, directory_manager=None):
         self.window_manager = window_manager
+        self.directory_manager = directory_manager
         self.utils = ScreenshotUtils()
         self.detection_strategy = DetectionStrategy(window_manager)
         self.validator = ScreenshotValidator()
@@ -72,8 +73,12 @@ class ScreenshotManager:
                 bounds['y'] + bounds['height']
             ))
             
-            # 保存截图
-            filepath = os.path.join(CrawlerConfig.SCREENSHOTS_DIR, filename)
+            # 保存截图 - 使用目录管理器或默认目录
+            if self.directory_manager:
+                filepath = self.directory_manager.get_button_screenshot_path(filename)
+            else:
+                filepath = os.path.join(CrawlerConfig.SCREENSHOTS_DIR, filename)
+            
             screenshot.save(filepath)
             print(f"📸 截图已保存: {filename}")
             
@@ -147,11 +152,9 @@ class ScreenshotManager:
                 
                 scroll_count += 1
             
-            # 滚动完成后，点击返回按钮回到上一页
-            if screenshots:
-                self._click_back_button(bounds)
-            
+            # 注意：不在这里点击返回按钮，让主流程控制返回操作
             print(f"📸 滚动截图完成，共 {len(screenshots)} 张图片")
+            print(f"💡 滚动截图完成，等待主流程控制返回操作")
             return screenshots
             
         except Exception as e:
@@ -180,23 +183,4 @@ class ScreenshotManager:
             
         except Exception as e:
             print(f"⚠️ 计算截图哈希失败: {e}")
-            return None
-    
-    def _click_back_button(self, bounds):
-        """点击左上角返回按钮回到上一页"""
-        try:
-            # 计算左上角返回按钮位置
-            # 通常在小程序左上角，距离边界约15-30像素
-            back_button_x = bounds['x'] + 25  # 距离左边界25像素
-            back_button_y = bounds['y'] + 35  # 距离顶部35像素
-            
-            print(f"🔙 点击返回按钮: ({back_button_x}, {back_button_y})")
-            pyautogui.click(back_button_x, back_button_y)
-            time.sleep(1.5)  # 等待页面切换
-            
-            print("✅ 已返回上一页")
-            return True
-            
-        except Exception as e:
-            print(f"⚠️ 点击返回按钮失败: {e}")
-            return False 
+            return None 

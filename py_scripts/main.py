@@ -5,9 +5,19 @@
 直接对当前已打开的小程序进行截图和按钮点击操作
 """
 
+import os
 import sys
+import warnings
+
+# 设置环境变量，避免MPS相关警告
+os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
+os.environ['TORCH_DEVICE'] = 'cpu'
+
+# 过滤PyTorch相关警告
+warnings.filterwarnings('ignore', category=UserWarning, module='torch')
+
 import pyautogui
-from crawler_core import CrawlerCore
+from smart_crawler import CrawlerCore
 from config import CrawlerConfig
 from app_config import get_app_name_from_config, get_preset_apps, is_verbose_logging
 
