@@ -43,10 +43,6 @@ class CrawlerCore:
             print("❌ 无法连接到MCP服务器，请确保服务器正在运行")
             return False
         
-        # 清理旧截图
-        print("🗑️ 清理旧截图文件...")
-        CrawlerConfig.clean_screenshots()
-        
         # 设置小程序环境
         if not self.window_manager.setup_mini_program_environment():
             print("❌ 无法设置小程序环境，请确保微信已打开")
@@ -135,21 +131,30 @@ class CrawlerCore:
         """爬取当前页面"""
         print(f"📄 正在爬取小程序页面: {page_name}")
         
+        # 如果是主页面，启动截图会话（清理旧截图）
+        if is_main_page:
+            self.screenshot_manager.start_screenshot_session()
+        
         # 确保聚焦到小程序区域
         self.window_manager.focus_mini_program_area()
         time.sleep(1)
         
         # 截取小程序区域的普通截图
-        screenshot_path = self.screenshot_manager.take_mini_program_screenshot(f"{page_name}_normal.png")
+        screenshot_path = self.screenshot_manager.take_miniprogram_screenshot(f"{page_name}_normal.png")
         if not screenshot_path:
             print(f"❌ 页面截图失败: {page_name}")
             return None
         
         # 滚动截取小程序的完整页面
-        full_screenshot_path, scroll_screenshots = self.screenshot_manager.take_full_page_screenshot()
-        if not full_screenshot_path:
-            print(f"❌ 完整页面截图失败: {page_name}")
-            return None
+        scroll_screenshots = self.screenshot_manager.take_scrolling_screenshot(page_name)
+        if not scroll_screenshots:
+            print(f"❌ 滚动截图失败: {page_name}")
+            # 如果滚动截图失败，使用普通截图作为备选
+            full_screenshot_path = screenshot_path
+            scroll_screenshots = []
+        else:
+            # 使用第一张滚动截图作为主要分析对象
+            full_screenshot_path = scroll_screenshots[0] if scroll_screenshots else screenshot_path
         
         # 分析完整页面
         analysis_data = self.analysis_client.analyze_screenshot(full_screenshot_path, page_name)
@@ -165,7 +170,7 @@ class CrawlerCore:
             'screenshots': {
                 'normal': os.path.basename(screenshot_path),
                 'full_page': os.path.basename(full_screenshot_path),
-                'scroll_sequence': [os.path.basename(path) for path in scroll_screenshots]
+                'scroll_sequence': [os.path.basename(path) for path in scroll_screenshots] if scroll_screenshots else []
             },
             'analysis': analysis_data,
             'extracted_features': self.analysis_client.extract_page_features(analysis_data),

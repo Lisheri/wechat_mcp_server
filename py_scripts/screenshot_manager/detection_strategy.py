@@ -27,9 +27,6 @@ class DetectionStrategy:
         """智能检测小程序内容边界（多重检测策略）"""
         print("\n🔍 开始智能检测小程序内容边界...")
         
-        # 清理旧截图
-        self.utils.clean_old_screenshots()
-        
         # 方法1: 系统窗口检测（最精确，类似Snipaste）
         print("\n🏆 尝试方法1: 系统级窗口检测")
         bounds = self.system_detector.detect_miniprogram_window()

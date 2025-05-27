@@ -298,7 +298,7 @@ class WeChatWindowManager:
         return icons
     
     def focus_mini_program_area(self):
-        """聚焦到小程序区域"""
+        """聚焦到小程序区域（点击顶部安全区域）"""
         if not self.mini_program_bounds:
             print("⚠️ 小程序区域未设置，使用默认区域")
             # 使用整个微信窗口作为小程序区域
@@ -309,18 +309,23 @@ class WeChatWindowManager:
                 'height': self.wechat_window_bounds['height'] - 30
             }
         
-        # 计算小程序区域中心点
+        # 计算小程序顶部安全区域的中心点（避免点击功能按钮）
+        # 顶部区域通常是标题栏或导航栏，相对安全
+        safe_top_area_height = 50  # 顶部安全区域高度
+        
         center_x = (self.wechat_window_bounds['x'] + 
                    self.mini_program_bounds['x'] + 
                    self.mini_program_bounds['width'] // 2)
-        center_y = (self.wechat_window_bounds['y'] + 
-                   self.mini_program_bounds['y'] + 
-                   self.mini_program_bounds['height'] // 2)
+        # 点击顶部安全区域，距离顶部25像素的位置
+        safe_y = (self.wechat_window_bounds['y'] + 
+                 self.mini_program_bounds['y'] + 
+                 safe_top_area_height // 2)
         
         try:
-            pyautogui.click(center_x, center_y)
+            print(f"🎯 聚焦到小程序顶部安全区域: ({center_x}, {safe_y})")
+            pyautogui.click(center_x, safe_y)
             time.sleep(CrawlerConfig.FOCUS_DELAY)
-            print(f"🎯 已聚焦到小程序区域: ({center_x}, {center_y})")
+            print("✅ 已安全聚焦到小程序顶部区域")
             return True
         except Exception as e:
             print(f"❌ 聚焦失败: {e}")

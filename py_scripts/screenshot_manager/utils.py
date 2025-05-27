@@ -104,6 +104,23 @@ class ScreenshotUtils:
         }
     
     @staticmethod
+    def calculate_safe_scroll_point(x, y, width, height):
+        """计算安全的滚动点位置，避开可能的按钮区域"""
+        # 避开顶部和底部的按钮区域
+        # 顶部20%和底部20%通常有导航栏和按钮
+        safe_top_margin = height * 0.2  # 顶部20%区域
+        safe_bottom_margin = height * 0.2  # 底部20%区域
+        
+        # 计算安全滚动区域（中间60%区域）
+        safe_y = y + safe_top_margin + (height - safe_top_margin - safe_bottom_margin) // 2
+        safe_x = x + width // 2  # 水平居中
+        
+        return {
+            'x': int(safe_x),
+            'y': int(safe_y)
+        }
+    
+    @staticmethod
     def format_bounds_info(bounds):
         """格式化边界信息输出"""
         return f"位置({bounds['x']},{bounds['y']}) 尺寸({bounds['width']}x{bounds['height']})" 
